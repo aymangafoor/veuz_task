@@ -1,4 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext, useEffect, useCallback } from 'react';
+import { ValueContext } from '../components/Context';
+import { debounce, max } from 'lodash';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -32,7 +34,7 @@ const Chart = () => {
     const [selectedTimeRange, setSelectedTimeRange] = useState({ start: '04:19:18 PM', end: '04:37:35 PM', index: 0 });
     const [FinalTimeRange, setFinalTimeRange] = useState({ start: '00:00:00 PM', end: '00:00:00 PM' });
     const [selectedProductivity, setSelectedProductivity] = useState('productive');
-
+    const { value, setValue } = useContext(ValueContext)
     // Generate time labels for x-axis (5-minute intervals)
     const generateTimeLabels = () => {
         const labels = [];
@@ -282,7 +284,7 @@ const Chart = () => {
                     label: function (context) {
                         const label = context.dataset.label || '';
                         const value = context.parsed.x || 0;
-                        return `${value}h ${Math.round((value % 1) * 60)}m - ${label}`;
+                        return `${Math.floor(value)}h ${Math.round((value % 1) * 60)}m - ${label}`;
                     },
                 },
             },
@@ -314,6 +316,8 @@ const Chart = () => {
                 let start = horizontalData.slice(0, datasetIndex).reduce((acc, curr) => acc + curr.hour, 0)
                 let end = start + Number(yValue)
                 setSelectedTimeRange({ start: getTimeFrom7AM(start), end: getTimeFrom7AM(end), index: datasetIndex })
+                // let hrmin = getHoursSince7AM(start), hrmax = getHoursSince7AM(end)
+                setValue({ min: getTimeFrom7AM(start), max: getTimeFrom7AM(end) })
                 console.log("clicked", elements[0], "start is", start, "end value is", end)
                 if (label === 'Idle' || label === 'Offline') {
                     setShowOfflineModal(true);
@@ -329,11 +333,13 @@ const Chart = () => {
         date.setMinutes(baseHour * 60 + totalMinutes);
 
         // Format to HH:MM AM/PM
-        let hours12 = date.getHours() % 12 || 12;
+        let hours12 = (date.getHours() % 12).toString().padStart(2, '0') || 12;
         let minutes = date.getMinutes().toString().padStart(2, '0');
+        let seconds = date.getSeconds().toString().padStart(2, "0");
         let ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+        // console.log("seconds", seconds)
 
-        return `${hours12}:${minutes} ${ampm}`;
+        return `${hours12}:${minutes}:${seconds} ${ampm}`;
     }
     function getHoursSince7AM(timeStr) {
         const [time, modifier] = timeStr.split(' ');
@@ -426,8 +432,8 @@ const Chart = () => {
                         <span className="modal-title gap-x-2">
                             <div className='offline-icon border border-gray-400 rounded h-8 w-8 grid place-items-center'>
                                 <svg viewBox="0 0 100 100" className='h-4 w-4' xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#DD4C4C" stroke-width="8" />
-                                    <line x1="20" y1="80" x2="80" y2="20" stroke="#DD4C4C" stroke-width="8" stroke-linecap="round" />
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#DD4C4C" strokeWidth="8" />
+                                    <line x1="20" y1="80" x2="80" y2="20" stroke="#DD4C4C" strokeWidth="8" strokeLinecap="round" />
                                 </svg>
                             </div>
                             <p className='font-semibold'>Offline Time</p>
@@ -437,8 +443,6 @@ const Chart = () => {
                     <MultiRangeSlider
                         min={convertTimeToMinutes(selectedTimeRange.start)}
                         max={convertTimeToMinutes(selectedTimeRange.end)}
-                        onChange={({ min, max }) => { setFinalTimeRange({ start: convertMinutesToTime(min), end: convertMinutesToTime(max) }) }}
-                        ref={childRef}
                     />
 
                     <div className="description-input">
@@ -479,20 +483,43 @@ const Chart = () => {
     };
     const saveData = () => {
         childRef.current?.childFunction();
-        if (selectedTimeRange.start == FinalTimeRange.start && selectedTimeRange.end == FinalTimeRange.end) {
+        console.log(`selected value min:${typeof value.min == "number"} and max:${value.max}`)
+        console.log(`finalTIme start:${convertMinutesToTime(value.min)} end:${convertMinutesToTime(value.max)} and selected start:${selectedTimeRange.start} and end:${selectedTimeRange.end}`)
+        let min = typeof value.min === 'number' ? convertMinutesToTime(value.min) : value.min, max = typeof value.max === 'number' ? convertMinutesToTime(value.max) : value.max;
+        if (selectedTimeRange.start == min && selectedTimeRange.end == max) {
             let data = horizontalData
             data[selectedTimeRange.index].label = "Online"
+            console.log("hours since", getHoursSince7AM(max))
             setHorizontalData(data)
             setShowOfflineModal(false)
             console.log("working")
         }
-        else if (selectedTimeRange.start == FinalTimeRange.start) {
+        else if (selectedTimeRange.start == min) {
             let data = horizontalData
-            let end_date = FinalTimeRange.end
+            let end_date = getHoursSince7AM(max);
+            let normal = data.slice(0, selectedTimeRange.index).reduce((acc, curr) => acc + curr.hour, 0), curr = data[selectedTimeRange.index].hour
+            console.log("end is", end_date, "and normal:", normal)
+            data[selectedTimeRange.index].label = "Online"
+            data[selectedTimeRange.index].hour = end_date - normal
+            data.splice(selectedTimeRange.index + 1, 0, { label: "Idle", hour: curr - (end_date - normal) })
+            console.log("final out is", data)
+            setHorizontalData(data)
+            setShowOfflineModal(false)
+            // let normalhorizontalData.slice(0, datasetIndex).reduce((acc, curr) => acc + curr.hour, 0)
+
+            console.log("else if is working")
         }
         else {
+            let data = horizontalData
+            // data[selectedTimeRange.index].label = "Online"
+            let end_date = getHoursSince7AM(max), start_date = getHoursSince7AM(min);
+            let normal = data.slice(0, selectedTimeRange.index).reduce((acc, curr) => acc + curr.hour, 0), curr = data[selectedTimeRange.index].hour
+            data[selectedTimeRange.index].hour = start_date - normal
+            data.splice(selectedTimeRange.index + 1, 0, { label: "Online", hour: curr - (start_date - normal) })
+            console.log("final out is", data)
             console.log("else is working")
-
+            setHorizontalData(data)
+            setShowOfflineModal(false)
         }
     }
     // Add markers for Offline and Idle times

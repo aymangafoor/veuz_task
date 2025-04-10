@@ -66,11 +66,10 @@ const MultiRangeSlider = forwardRef(({ min, max, onChange }, ref) => {
 
         // Use a timeout to avoid synchronous updates
         setTimeout(() => {
-            // onChange({ min: minValRef.current, max: maxValRef.current });
-            console.log(`value is changing min:${minValRef.current} max:${maxValRef.current}`,)
+            onChange({ min: minValRef.current, max: maxValRef.current });
             setValue({ min: minValRef.current, max: maxValRef.current });
         }, 0);
-    }, [setValue]);
+    }, [onChange, setValue]);
 
     // Handle slider thumb movements
     const handleMinChange = (e) => {
