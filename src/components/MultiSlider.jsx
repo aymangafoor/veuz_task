@@ -64,12 +64,12 @@ const MultiRangeSlider = forwardRef(({ min, max, onChange }, ref) => {
             return;
         }
 
-        // Use a timeout to avoid synchronous updates
-        setTimeout(() => {
-            // onChange({ min: minValRef.current, max: maxValRef.current });
-            console.log(`value is changing min:${minValRef.current} max:${maxValRef.current}`,)
-            setValue({ min: minValRef.current, max: maxValRef.current });
-        }, 0);
+        // // Use a timeout to avoid synchronous updates
+        // setTimeout(() => {
+        // onChange({ min: minValRef.current, max: maxValRef.current });
+        console.log(`value is changing min:${minValRef.current} max:${maxValRef.current}`,)
+        setValue({ min: minValRef.current, max: maxValRef.current });
+        // }, 0);
     }, [setValue]);
 
     // Handle slider thumb movements
@@ -103,8 +103,8 @@ const MultiRangeSlider = forwardRef(({ min, max, onChange }, ref) => {
                 max={max}
                 value={displayValues.min}
                 onChange={handleMinChange}
-                onMouseUp={notifyChanges}
-                onTouchEnd={notifyChanges}
+                onMouseUp={() => { notifyChanges(); console.log("mouse up") }}
+                onTouchEnd={() => { notifyChanges(); console.log("touch ends") }}
                 className="thumb thumb--left"
                 style={{ zIndex: displayValues.min > max - 100 ? 5 : undefined }}
             />
@@ -114,8 +114,8 @@ const MultiRangeSlider = forwardRef(({ min, max, onChange }, ref) => {
                 max={max}
                 value={displayValues.max}
                 onChange={handleMaxChange}
-                onMouseUp={notifyChanges}
-                onTouchEnd={notifyChanges}
+                onMouseUp={() => { notifyChanges(); console.log("mouse up") }}
+                onTouchEnd={() => { notifyChanges(); console.log("touch ends") }}
                 className="thumb thumb--right"
             />
             <div className="slider">
