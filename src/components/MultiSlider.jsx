@@ -9,7 +9,7 @@ const MultiRangeSlider = forwardRef(({ min, max, onChange }, ref) => {
     const minValRef = useRef(min);
     const maxValRef = useRef(max);
     const range = useRef(null);
-    const [value, setValue] = useState(value)
+    const [value, setValue] = useState()
 
     // Convert to percentage
     const getPercent = useCallback(
