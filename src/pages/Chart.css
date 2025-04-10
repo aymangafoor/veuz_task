@@ -1,0 +1,317 @@
+    /* App.css */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        background-color: #f5f6fa;
+        color: #333;
+    }
+
+    .app {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-container {
+        position: relative;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .chart-container.vertical {
+        height: 300px;
+    }
+
+    .chart-container.horizontal {
+        height: 90px;
+    }
+
+    .time-markers {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 0;
+    }
+
+    .time-marker {
+        position: absolute;
+        top: -10px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        color: white;
+        transform: translateY(-100%);
+        white-space: nowrap;
+        z-index: 10;
+    }
+
+    .time-marker.offline {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .time-marker.idle {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    /* Custom tooltip styles */
+    .custom-tooltip {
+        position: fixed;
+        background-color: #f5f5f5f4;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        padding: 12px;
+        width: 200px;
+        z-index: 1000;
+        font-size: 14px;
+    }
+
+    .tooltip-header {
+        display: flex;
+        justify-content: center;
+        column-gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+
+    .tooltip-type {
+        padding: 4px 8px;
+        border-radius: 4px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    /* .tooltip-type.productive {
+        background-color: rgb(104, 183, 104);
+    }
+
+    .tooltip-type.neutral {
+        background-color: rgb(192, 192, 192);
+    }
+
+    .tooltip-type.unproductive {
+        background-color: rgb(247, 163, 92);
+    } */
+
+    .tooltip-percentage {
+        font-weight: 600;
+    }
+
+    .tooltip-apps {
+        margin-bottom: 10px;
+    }
+
+    .tooltip-app {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+    }
+
+    .app-name {
+        color: #666;
+    }
+
+    .app-time {
+        color: #888;
+        font-weight: 600;
+    }
+
+    .tooltip-footer {
+        font-size: 12px;
+        color: #222222;
+        font-weight: 600;
+        padding-top: 6px;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal {
+        background-color: white;
+        border-radius: 8px;
+        width: 500px;
+        padding: 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+
+    .icon-offline {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background-color: #e74c3c;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .close-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #777;
+    }
+
+    .time-range {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+    .time-separator {
+        margin: 0 10px;
+        color: #777;
+    }
+
+    .time-slider {
+        margin-bottom: 20px;
+    }
+
+    .slider-track {
+        position: relative;
+        height: 6px;
+        background-color: #e0e0e0;
+        border-radius: 3px;
+    }
+
+    .slider-handle {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background-color: #f0914a;
+        border-radius: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+    }
+
+    .slider-handle.left {
+        left: 10%;
+    }
+
+    .slider-handle.right {
+        left: 90%;
+    }
+
+    .description-input {
+        margin-bottom: 20px;
+    }
+
+    .description-input input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .section-title {
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .options {
+        display: flex;
+        gap: 10px;
+    }
+
+    .option {
+        flex: 1;
+        padding: 6px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-align: center;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        color: #333;
+    }
+
+    .option.productive.selected {
+        background-color: rgb(104, 183, 104);
+        color: white;
+        border-color: rgb(76, 175, 80);
+    }
+
+
+    .option.unproductive.selected {
+        background-color: rgb(247, 163, 92);
+        color: white;
+        border-color: rgb(245, 124, 0);
+    }
+
+    .option.neutral.selected {
+        background-color: rgb(192, 192, 192);
+        color: white;
+        border-color: rgb(158, 158, 158);
+    }
+
+    .check-icon {
+        margin-right: 6px;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .option.selected .check-icon:before {
+        content: '✓';
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .modal-actions button {
+        width: 35%;
+        cursor: pointer;
+    }
+
+    /* Animation for charts */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    .chart-container {
+        animation: fadeIn 0.5s ease-in-out;
+    }
